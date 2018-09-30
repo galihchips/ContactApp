@@ -3,9 +3,9 @@ import {logger} from 'redux-logger';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise-middleware';
 
-import contactReducer from './reducers/contact';
+import appReducer from './reducers/index'; //import app reducers dari index reducers
 
-const middleware = applyMiddleware(logger, thunk, promise());
-const store = createStore(contactReducer, middleware);
+const middleware = applyMiddleware(thunk, promise());
+const store = createStore(appReducer, middleware);
 
 export default store;

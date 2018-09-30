@@ -1,30 +1,17 @@
+//IMPORT COMPONENT FROM REACT NATIVE 
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity
-} from 'react-native';
-import {
-  Container,
-  Content,
-  Header,
-  Left,
-  Body,
-  Right,
-  Form,
-  Label,
-  Item,
-  Input,
-  Button  
-} from 'native-base';
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
+import { Container, Content, Header, Left, Body, Right, Form, Label, Item, Input, Button, Title, Card, CardItem, Thumbnail } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import IonIcon from 'react-native-vector-icons/Ionicons';
 
-import { fetchContact } from '../actions/contact';
+
+//IMPORT FUNCTION
+import { createContact } from '../actions/contacts';
 
 class AddContact extends Component{
-  
   static navigationOptions = {
     header: null
   }
@@ -32,72 +19,83 @@ class AddContact extends Component{
   constructor(){
     super();
     this.state = {
-      nama: '',
-      no: '',
-      imageUri : 'http://zlatykuchar.cz/files/2018/01/silueta.jpg'
+      name: '',
+      phonenumber: '',
+      imageUri : 'https://thumbs.dreamstime.com/b/ic-ne-de-signe-d-utilisateur-symbole-de-personne-avatar-humain-84519083.jpg',
+      status : 'Ada',
+      groupName: 'Bootcamp 4'
+    }
+  }
+
+  validate(){
+    if(this.state.name == '' ){
+      Alert.alert("Please Input Name First")
+    } else if (this.state.phonenumber == ''){
+      Alert.alert("Please Input Number First")
+    } else {
+      {this.handleSave()}
     }
   }
 
   handleSave(){
-    axios({
-      method: 'post',
-      url: 'http://rest.learncode.academy/api/galih/listcontact',
-      data: this.state
-    }).then(()=>{
-      this.props.dispatch(fetchContact());
-      this.props.navigation.goBack();
-    });
+    this.props.dispatch(createContact(this.state))
+    this.props.navigation.goBack()
   }
   
   render(){
     return (
       <Container>
-          <Header style={{backgroundColor :'#fff',borderBottomWidth : 0.5}}>
+          <Header androidStatusBarColor="#048c00" style ={{backgroundColor : '#06ce00'}}>
             <Left>
               <TouchableOpacity onPress = {() => this.props.navigation.goBack()} >
-                <Icon 
-                size ={30} 
-                name ='ios-arrow-back'  />
+                  <IonIcon 
+                  size ={30} 
+                  name ='ios-arrow-back'
+                  color = '#fff'  />
               </TouchableOpacity>
             </Left>
-            <Body style={{alignSelf: 'center'}}>
-              <Text style={{fontSize : 15}}>Tambah Kontak Baru</Text>
+            <Body>
+              <Title style ={{color : '#fff'}}>Add Contact</Title>
             </Body>
-            <Right>
-              <TouchableOpacity onPress = {() => this.handleSave()} >
-               <Icon
-               style ={{marginRight : 20}}
-               size ={30} 
-               name = 'md-checkmark' />
-              </TouchableOpacity>
-            </Right>
-        </Header>
-        <Content>
-            <Form>
-                  <Item>
+          </Header>
+          <Content>
+            <Card
+            transparent
+            style ={{borderWidth:1}} 
+            >
+              <CardItem>
+                <Item>
                     <Icon 
-                      active name='ios-person' 
-                      size ={30}
-                    />
+                      size ={25}
+                      active name='ios-person' />
                     <Input 
-                      style={{marginLeft : 30}}
-                      placeholder='Nama'
-                      onChangeText={(text)=>this.setState({nama: text})}
+                      style={{marginLeft : 30,width:'30%'}}
+                      placeholder='Name'
+                      onChangeText={(text)=>this.setState({name: text})}
                     />
-                  </Item>
+                </Item>
+              </CardItem>
+              <CardItem>
                   <Item>
                     <Icon 
-                      size ={30}
+                      size ={25}
                       active name='ios-call' />
-                    <Input 
+                    <Input
+                      maxLength = {13}
                       keyboardType="numeric"
-                      style={{marginLeft : 30}}
-                      placeholder='Telepon'
-                      onChangeText={(text)=>this.setState({no: text})}
+                      style={{marginLeft : 30,width:'30%'}}
+                      placeholder='Phone Number'
+                      onChangeText={(text)=>this.setState({phonenumber: text})}
                     />
                   </Item>
-            </Form>
+              </CardItem>
+            </Card>
         </Content>
+        <Button 
+          full light
+          onPress = {() => this.validate()}>
+            <Text>Save</Text>
+        </Button>
       </Container>
     )
   }
@@ -105,7 +103,7 @@ class AddContact extends Component{
 
 const mapStateToProps = (state)=>{
   return{
-    data: state,
+    contact: state.contacts.contact
   }
 }
 export default connect(mapStateToProps)(AddContact);

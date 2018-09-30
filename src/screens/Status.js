@@ -1,31 +1,31 @@
-//IMPORT FROM REACT
+//IMPORT COMPONENT FROM REACT
 
 import React, {Component} from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Container, Content, Body, Text, List, ListItem, Thumbnail, Header, Left, Right, Button, Card, CardItem, Image, Title, Form, Item, Label, Input, Footer } from 'native-base';
 import { View } from 'react-native';
 import axios from 'axios';
-import { connect } from 'react-redux';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
 //IMPORT FUNCTION
-import { fetchContacts } from '../actions/contacts';
 
-class EditName extends Component {
+import { fetchContacts } from '../actions/contacts';
+import { connect } from 'react-redux';
+
+class Status extends Component {
 	constructor(props) {
 	  super(props);
 	
 	  this.state = {
-	  	name : this.props.navigation.state.params.name,
-	  	phonenumber : this.props.navigation.state.params.phonenumber
+	  	status : this.props.navigation.state.params.status
 	  };
 	}
 
 	static navigationOptions = {
 	    header: null
 	}
-	
+
 	handleEdit(id){			 
 		      axios({
 			      method: 'put',
@@ -33,10 +33,16 @@ class EditName extends Component {
 			      data: this.state
 			    }).then(()=>{
 			      this.props.dispatch(fetchContacts());
-			      this.props.navigation.popToTop();
+			      this.props.navigation.pop();
 			    });
 	}
-	
+
+	ada = () => {
+      this.setState({status: 'Ada'})
+   }
+	sibuk = () => {
+      this.setState({status: 'Sibuk'})
+   }
 	render(){
 		const contact = this.props.navigation.state.params
 		return (
@@ -44,21 +50,37 @@ class EditName extends Component {
 					<Header androidStatusBarColor="#048c00" style ={{backgroundColor : '#06ce00'}}>
 				        <Left />
 					 	<Body style={{alignSelf: 'center'}}>
-						 	<Title style ={{color : '#fff'}}>Input Your Number</Title>
+						 	<Title style ={{color : '#fff'}}>Info</Title>
 					 	</Body>
 					</Header>
 					<Content>
-						<Form>
-				            <Item floatingLabel>
-				              <Label>Phone Number</Label>
-				              <Input
-				              maxLength = {13}
-				              keyboardType="numeric"
-				              value = {this.state.phonenumber}
-				              onChangeText={(text)=>this.setState({phonenumber: text})}
-				              />
-				            </Item>
-				          </Form>
+						<Card>
+							<CardItem borderd>
+								<View>
+									<Text style ={{fontSize: 14,color :'#048c00'}}>Your Status</Text>
+								</View>
+							</CardItem>
+							<CardItem borderd>
+								<View>
+									<Text>{this.state.status}</Text>
+								</View>
+							</CardItem>
+						</Card>
+						<Card>
+							<CardItem bordered>
+								<View>
+									<Text style ={{fontSize: 14,color :'#048c00'}}>Choose Your Status</Text>
+								</View>
+							</CardItem>
+							<List>
+						            <ListItem onPress = {this.ada}>
+						              <Text>Ada</Text>
+						            </ListItem>
+						            <ListItem onPress = {this.sibuk}>
+						              <Text>Sibuk</Text>
+						            </ListItem>
+						    </List>
+						</Card>
 					</Content>
 					<Footer style ={{backgroundColor :'#fff'}}>
 						<Button 
@@ -84,4 +106,4 @@ const mapStateToProps = (state) => {
     contacts: state.contacts.contacts
   }
 }
-export default connect(mapStateToProps)(EditName);
+export default connect(mapStateToProps)(Status);

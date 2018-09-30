@@ -1,40 +1,36 @@
-//IMPORT FROM REACT
+//IMPORT COMPONENT FROM REACT
 
 import React, {Component} from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Container, Content, Body, Text, List, ListItem, Thumbnail, Header, Left, Right, Button, Card, CardItem, Image, Title, Form, Item, Label, Input, Footer } from 'native-base';
 import { View } from 'react-native';
 import axios from 'axios';
-import { connect } from 'react-redux';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
 //IMPORT FUNCTION
-import { fetchContacts } from '../actions/contacts';
 
-class EditName extends Component {
+import { updateContact, fetchContacts } from '../actions/contacts';
+import { connect } from 'react-redux';
+
+class EditInfo extends Component {
 	constructor(props) {
 	  super(props);
 	
 	  this.state = {
 	  	name : this.props.navigation.state.params.name,
-	  	phonenumber : this.props.navigation.state.params.phonenumber
+	  	phonenumber : this.props.navigation.state.params.phonenumber,
+	  	contact: this.props.navigation.state.params
 	  };
 	}
 
 	static navigationOptions = {
 	    header: null
 	}
-	
+
 	handleEdit(id){			 
-		      axios({
-			      method: 'put',
-			      url: `http://192.168.0.17:5000/api/contacts/${id}`,
-			      data: this.state
-			    }).then(()=>{
-			      this.props.dispatch(fetchContacts());
-			      this.props.navigation.popToTop();
-			    });
+		this.props.dispatch(updateContact(id ,this.state))
+		this.props.navigation.goBack()
 	}
 	
 	render(){
@@ -44,16 +40,25 @@ class EditName extends Component {
 					<Header androidStatusBarColor="#048c00" style ={{backgroundColor : '#06ce00'}}>
 				        <Left />
 					 	<Body style={{alignSelf: 'center'}}>
-						 	<Title style ={{color : '#fff'}}>Input Your Number</Title>
+						 	<Title style ={{color : '#fff'}}>Edit Info</Title>
 					 	</Body>
 					</Header>
 					<Content>
 						<Form>
 				            <Item floatingLabel>
+				              <Label>Name</Label>
+				              <Input 
+				              value = {this.state.name}
+				              onChangeText={(text)=>this.setState({name: text})}
+				              />
+				            </Item>
+				          </Form>
+				          <Form>
+				            <Item floatingLabel>
 				              <Label>Phone Number</Label>
 				              <Input
 				              maxLength = {13}
-				              keyboardType="numeric"
+                      		  keyboardType="numeric"
 				              value = {this.state.phonenumber}
 				              onChangeText={(text)=>this.setState({phonenumber: text})}
 				              />
@@ -68,7 +73,7 @@ class EditName extends Component {
 				        </Button>
 						<Button 
 						full light
-						onPress = {() => this.handleEdit(contact._id)}
+						onPress = {() =>this.handleEdit(contact._id)}
 						>
 				            <Text>Save</Text>
 				        </Button>
@@ -84,4 +89,4 @@ const mapStateToProps = (state) => {
     contacts: state.contacts.contacts
   }
 }
-export default connect(mapStateToProps)(EditName);
+export default connect(mapStateToProps)(EditInfo);
